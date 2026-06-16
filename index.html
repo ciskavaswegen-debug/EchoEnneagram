@@ -171,7 +171,9 @@ select{width:100%;padding:0.6rem 0.8rem;border:1px solid #c8c8c8;background:#eef
 </div>
 
 <script>
-var COLORS=['#EBDED4','#d3b1c2','#d2bcd8','#b6ccd7','#a8a5a5','#ebc4c4','#9fc7aa','#cf8282','#efe2ac'];
+var SUPABASE_URL='https://zlndfullkzgzibblgmqv.supabase.co';
+var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpsbmRmdWxsa3pnemliYmxnbXF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MDA1MzcsImV4cCI6MjA5NzE3NjUzN30.5QV_9qEFFsVIhSvNMYcJIJkUez6m_vn_vjEuvl_0jDE';
+var SITE_URL='https://echoenneagram.netlify.app';['#EBDED4','#d3b1c2','#d2bcd8','#b6ccd7','#a8a5a5','#ebc4c4','#9fc7aa','#cf8282','#efe2ac'];
 var SHORT=['Reformer','Helper','Achiever','Individualist','Investigator','Loyalist','Enthusiast','Challenger','Peacemaker'];
 
 var QUESTIONS=[
@@ -199,6 +201,31 @@ var TYPE_DATA=[
   {name:"Type 8 — The Challenger",color:"#cf8282",core:"You are self-confident, decisive, and fiercely protective of the people and causes you care about. Eights are motivated by a need to be strong and to avoid vulnerability, and they move through the world with a directness and force that others can find both commanding and intimidating. From childhood, you decided that the world rewards strength and punishes weakness — so you chose strength. What people rarely see is the tenderness underneath. Eights care deeply, fight for the underdog, and will take a bullet for those they trust. But that trust is hard-won. Betrayal is your deepest wound and your greatest fear. Your anger is real and rises quickly, but it does not last long — and it is often the cover for softer feelings you have not yet found words for. At your best, you are a powerful champion for others: using your strength, energy, and intensity not to dominate but to protect and lead with courage.",strengths:["Natural, commanding presence that instils confidence in others","Decisive and action-oriented — moves quickly from idea to impact","Fiercely protective and loyal to those they trust","High energy, resilience, and willingness to tackle what others avoid","Honest and direct — cuts through confusion and calls things as they are"],challenges:["Vulnerability feels like weakness — and avoiding it costs connection","Can be seen as aggressive, domineering, or intimidating unintentionally","Creates adversarial dynamics when directness is not balanced with warmth","Struggles to relinquish control or follow another's lead","May not recognise the impact of their presence on those around them"],wingA:{n:"Wing 7 (The Maverick)",d:"With a Seven wing you become more visionary, energetic, and entrepreneurial. You combine boldness with creativity and are drawn to big ideas, freedom, and adventure. You are more sociable and more fun — the most energetic combination on the Enneagram."},wingB:{n:"Wing 9 (The Bear)",d:"With a Nine wing you become more patient, grounded, and quietly powerful. You are still decisive and strong, but more measured and diplomatic. You can sit still, which other Eights find difficult — and this steadiness makes you deeply effective."},stress:{t:5,d:"Under stress, Eights move to Type 5 — becoming withdrawn, secretive, and cerebral. You retreat from the field of action and retreat into analysis, strategising in isolation rather than engaging directly. The usually visible Eight becomes suddenly invisible."},growth:{t:2,d:"In growth, Eights move to Type 2 — becoming warm, open-hearted, and genuinely invested in others' wellbeing. You use your power in service of people rather than agendas, and — perhaps for the first time — you allow yourself to give and receive care."},workplace:"You are a natural leader — someone who takes charge, makes hard calls, and drives results without apology. You thrive in high-stakes, fast-moving environments where decisiveness matters, and you are the person others instinctively turn to in a crisis. The challenge is psychological safety: not everyone can match your pace, your volume, or your certainty, and your directness can silence the very voices you most need to hear. The best Eights learn that real strength includes creating space for others to be strong too."},
   {name:"Type 9 — The Peacemaker",color:"#efe2ac",core:"You are accepting, reassuring, and steady — someone who brings calm into any room and sees all sides of every story with remarkable clarity. Nines are motivated by a desire for inner peace and harmony, and they will go to great lengths to protect both, including setting aside their own needs, opinions, and agenda to avoid disruption. The spiritual challenge of Nines is not laziness but a kind of spiritual sloth — a reluctance to fully claim their own life, their own desires, and their own presence. You self-forget. You merge with the agendas of others because it takes less energy than the conflict that might follow from asserting your own. But your presence matters. When a Nine wakes up to their own importance and speaks from their own perspective, something extraordinary happens — everyone benefits. At your best, you are a natural peacemaker, a profound mediator, and the steady, inclusive presence that holds communities together.",strengths:["Natural mediator with an uncommon ability to hold multiple perspectives","Inclusive, empathetic, and easy to be around","Patient, stable, and a calming presence in times of conflict","Deeply loyal — stays when others leave","Sees two sides to everything, which makes them trustworthy and fair"],challenges:["Self-forgetting — merges with others' agendas at the cost of their own","Passive-aggressive when angry rather than direct","Prone to inertia, distraction, and difficulty prioritising their own life","May mistake pseudo-peace (avoidance) for genuine peace","Stubbornly resistant when pressured — the most quietly stubborn type"],wingA:{n:"Wing 8 (The Referee)",d:"With an Eight wing you become more assertive, direct, and willing to step into conflict when something truly matters. You can still play the peacemaker role but are willing to confront and intervene rather than simply absorbing tension."},wingB:{n:"Wing 1 (The Dreamer)",d:"With a One wing you become more principled, organised, and idealistic. You are drawn to harmony through order and hold a clear sense of how a fair and well-functioning world should look. You are more structured and self-disciplined."},stress:{t:6,d:"Under stress, Nines move to Type 6 — becoming anxious, worried, and scanning for what could go wrong. The characteristic calm is replaced by self-doubt, indecision, and a heightened need for reassurance and external guidance."},growth:{t:3,d:"In growth, Nines move to Type 3 — becoming motivated, goal-oriented, and actively engaged with the world. You begin to act on your own agenda, set goals that matter to you, and develop a stronger and more confident sense of personal identity."},workplace:"You bring calm, perspective, and genuine inclusivity to every team you are part of. You are the colleague who can mediate, absorb tension, ensure everyone feels heard, and hold together communities that would otherwise fragment. You thrive in collaborative, low-conflict environments with clear expectations. The challenge is self-advocacy — making sure your voice, your ideas, and your needs are visible and valued. You are not here to hold space for others while disappearing yourself. Your presence matters. Say so."}
 ];
+
+// Check if we're viewing a saved result
+(async function(){
+  var path=window.location.pathname;
+  var match=path.match(/\/result\/([a-z0-9]{8})$/);
+  if(!match) return;
+  var id=match[1];
+  // Show loading screen
+  document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;font-size:1rem;">Loading your results...</div>';
+  try{
+    var resp=await fetch(SUPABASE_URL+'/rest/v1/results?id=eq.'+id+'&select=report_html',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    var data=await resp.json();
+    if(data&&data.length&&data[0].report_html){
+      document.open();
+      document.write(data[0].report_html);
+      document.close();
+    } else {
+      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;">Result not found. <a href="/" style="margin-left:8px;color:#404040;">Take the assessment</a></div>';
+    }
+  } catch(e){
+    document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;">Could not load results. <a href="/" style="margin-left:8px;color:#404040;">Take the assessment</a></div>';
+  }
+})();
 
 var answers={}, currentPage=0, userData={}, uploadedLogoSrc=null, activeType=null, currentScores=null;
 
@@ -328,22 +355,80 @@ function buildTypeNav(scores,dominantIdx){
   }
 }
 
-function showResults(){
+async function showResults(){
   showScreen('s-results');
   var scores=calcScores();
   currentScores=scores;
   var best=scores.indexOf(Math.max.apply(null,scores));
   activeType=best;
-  document.getElementById('results-title').textContent=userData.name+"'s Enneagram Results";
-  var ctaHtml=buildCTA(scores,best);
-  document.getElementById('cta-top').innerHTML=ctaHtml;
-  document.getElementById('cta-bottom').innerHTML=ctaHtml;
+  var n=userData.name, s=userData.surname;
+  var dateStr=new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
+
+  document.getElementById('results-title').textContent=n+"'s Enneagram Results";
   drawPie(scores,activeType);
   buildTypeNav(scores,best);
   renderDetail(best);
+
+  // Show CTA with loading state while saving
+  var loadingCTA='<div class="cta-block"><h3>Next steps</h3><p style="color:#8a8a8a;">Preparing your results link...</p></div>';
+  document.getElementById('cta-top').innerHTML=loadingCTA;
+  document.getElementById('cta-bottom').innerHTML=loadingCTA;
+
+  var reportHTML=buildReportHTML(scores,best,n,s,dateStr);
+  var shortLink=await saveResultsAndGetLink(scores,best,n,s,dateStr,reportHTML);
+
+  // Fall back to data URL if Supabase save failed
+  if(!shortLink){
+    var encoded=btoa(unescape(encodeURIComponent(reportHTML)));
+    shortLink='data:text/html;base64,'+encoded;
+  }
+
+  var ctaHtml=buildCTA(scores,best,shortLink);
+  document.getElementById('cta-top').innerHTML=ctaHtml;
+  document.getElementById('cta-bottom').innerHTML=ctaHtml;
+}
+function generateId(){
+  var chars='abcdefghijklmnopqrstuvwxyz0123456789';
+  var id='';
+  for(var i=0;i<8;i++) id+=chars[Math.floor(Math.random()*chars.length)];
+  return id;
 }
 
-function buildReportHTML(scores, best, n, s, dateStr){
+async function saveResultsAndGetLink(scores,best,n,s,dateStr,reportHTML){
+  var id=generateId();
+  var payload={
+    id:id,
+    name:n,
+    surname:s,
+    dominant_type:TYPE_DATA[best].name,
+    scores:scores,
+    report_html:reportHTML
+  };
+  try{
+    var resp=await fetch(SUPABASE_URL+'/rest/v1/results',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':SUPABASE_KEY,
+        'Authorization':'Bearer '+SUPABASE_KEY,
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify(payload)
+    });
+    if(resp.ok){
+      return SITE_URL+'/result/'+id;
+    } else {
+      var err=await resp.text();
+      console.error('Supabase error:',err);
+      return null;
+    }
+  } catch(e){
+    console.error('Save failed:',e);
+    return null;
+  }
+}
+
+scores, best, n, s, dateStr){
   var d=TYPE_DATA[best];
   var scoresHtml=scores.map(function(sc,i){
     return '<div style="display:flex;align-items:center;gap:10px;margin:3px 0;">'+
@@ -397,10 +482,12 @@ function buildReportHTML(scores, best, n, s, dateStr){
   '</div></body></html>';
 }
 
-function buildCTA(scores,best){
+function buildCTA(scores,best,reportLink){
   var n=userData.name,s=userData.surname,e=userData.email,p=userData.phone||'Not provided';
   var to='ciskavaswegen@gmail.com';
-  var dateStr=new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
+  var dominantType=TYPE_DATA[best];
+  var scoresText=scores.map(function(sc,i){return 'Type '+(i+1)+' ('+SHORT[i]+'): '+sc+'%';}).join('\n');
+  var resultsBlock='PARTICIPANT DETAILS:\nName: '+n+' '+s+'\nEmail: '+e+'\nContact: '+p+'\n\nDOMINANT TYPE: '+dominantType.name+'\n\nALL SCORES:\n'+scoresText;
 
   var reportHTML=buildReportHTML(scores,best,n,s,dateStr);
   var encoded=btoa(unescape(encodeURIComponent(reportHTML)));
