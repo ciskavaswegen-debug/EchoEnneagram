@@ -203,28 +203,28 @@ var TYPE_DATA=[
 ];
 
 // Check if we're viewing a saved result
-(async function(){
-  var path=window.location.pathname;
-  var match=path.match(/\/result\/([a-z0-9]{8})$/);
-  if(!match) return;
-  var id=match[1];
-  // Show loading screen
-  document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;font-size:1rem;">Loading your results...</div>';
+(function(){
   try{
-    var resp=await fetch(SUPABASE_URL+'/rest/v1/results?id=eq.'+id+'&select=report_html',{
+    var path=window.location.pathname;
+    var match=path.match(/\/result\/([a-z0-9]{8})$/);
+    if(!match) return;
+    var id=match[1];
+    document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;">Loading your results...</div>';
+    fetch(SUPABASE_URL+'/rest/v1/results?id=eq.'+id+'&select=report_html',{
       headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    })
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data&&data.length&&data[0].report_html){
+        document.open();document.write(data[0].report_html);document.close();
+      } else {
+        document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;">Result not found. <a href="/" style="margin-left:8px;color:#404040;">Take the assessment</a></div>';
+      }
+    })
+    .catch(function(){
+      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;">Could not load results. <a href="/" style="margin-left:8px;color:#404040;">Take the assessment</a></div>';
     });
-    var data=await resp.json();
-    if(data&&data.length&&data[0].report_html){
-      document.open();
-      document.write(data[0].report_html);
-      document.close();
-    } else {
-      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;">Result not found. <a href="/" style="margin-left:8px;color:#404040;">Take the assessment</a></div>';
-    }
-  } catch(e){
-    document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#404040;">Could not load results. <a href="/" style="margin-left:8px;color:#404040;">Take the assessment</a></div>';
-  }
+  } catch(e){}
 })();
 
 var answers={}, currentPage=0, userData={}, uploadedLogoSrc=null, activeType=null, currentScores=null;
@@ -355,7 +355,7 @@ function buildTypeNav(scores,dominantIdx){
   }
 }
 
-async function showResults(){
+function showResults(){
   showScreen('s-results');
   var scores=calcScores();
   currentScores=scores;
@@ -369,23 +369,29 @@ async function showResults(){
   buildTypeNav(scores,best);
   renderDetail(best);
 
-  // Show CTA with loading state while saving
   var loadingCTA='<div class="cta-block"><h3>Next steps</h3><p style="color:#8a8a8a;">Preparing your results link...</p></div>';
   document.getElementById('cta-top').innerHTML=loadingCTA;
   document.getElementById('cta-bottom').innerHTML=loadingCTA;
 
   var reportHTML=buildReportHTML(scores,best,n,s,dateStr);
-  var shortLink=await saveResultsAndGetLink(scores,best,n,s,dateStr,reportHTML);
 
-  // Fall back to data URL if Supabase save failed
-  if(!shortLink){
+  saveResultsAndGetLink(scores,best,n,s,dateStr,reportHTML)
+  .then(function(shortLink){
+    if(!shortLink){
+      var encoded=btoa(unescape(encodeURIComponent(reportHTML)));
+      shortLink='data:text/html;base64,'+encoded;
+    }
+    var ctaHtml=buildCTA(scores,best,shortLink);
+    document.getElementById('cta-top').innerHTML=ctaHtml;
+    document.getElementById('cta-bottom').innerHTML=ctaHtml;
+  })
+  .catch(function(){
     var encoded=btoa(unescape(encodeURIComponent(reportHTML)));
-    shortLink='data:text/html;base64,'+encoded;
-  }
-
-  var ctaHtml=buildCTA(scores,best,shortLink);
-  document.getElementById('cta-top').innerHTML=ctaHtml;
-  document.getElementById('cta-bottom').innerHTML=ctaHtml;
+    var shortLink='data:text/html;base64,'+encoded;
+    var ctaHtml=buildCTA(scores,best,shortLink);
+    document.getElementById('cta-top').innerHTML=ctaHtml;
+    document.getElementById('cta-bottom').innerHTML=ctaHtml;
+  });
 }
 function generateId(){
   var chars='abcdefghijklmnopqrstuvwxyz0123456789';
@@ -394,7 +400,7 @@ function generateId(){
   return id;
 }
 
-async function saveResultsAndGetLink(scores,best,n,s,dateStr,reportHTML){
+function saveResultsAndGetLink(scores,best,n,s,dateStr,reportHTML){
   var id=generateId();
   var payload={
     id:id,
@@ -404,28 +410,21 @@ async function saveResultsAndGetLink(scores,best,n,s,dateStr,reportHTML){
     scores:scores,
     report_html:reportHTML
   };
-  try{
-    var resp=await fetch(SUPABASE_URL+'/rest/v1/results',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'apikey':SUPABASE_KEY,
-        'Authorization':'Bearer '+SUPABASE_KEY,
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify(payload)
-    });
-    if(resp.ok){
-      return SITE_URL+'/result/'+id;
-    } else {
-      var err=await resp.text();
-      console.error('Supabase error:',err);
-      return null;
-    }
-  } catch(e){
-    console.error('Save failed:',e);
+  return fetch(SUPABASE_URL+'/rest/v1/results',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'apikey':SUPABASE_KEY,
+      'Authorization':'Bearer '+SUPABASE_KEY,
+      'Prefer':'return=minimal'
+    },
+    body:JSON.stringify(payload)
+  })
+  .then(function(resp){
+    if(resp.ok) return SITE_URL+'/result/'+id;
     return null;
-  }
+  })
+  .catch(function(){return null;});
 }
 
 scores, best, n, s, dateStr){
