@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECHO Enneagram Assessment</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Georgia',serif;background:#eef2f5;color:#1a1a1a;min-height:100vh}
+.app{max-width:700px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.logo-wrap{text-align:center;padding:1.5rem 0 1rem}
+.progress-bar-wrap{background:#dde3e8;border-radius:4px;height:5px;margin-bottom:1.5rem}
+.progress-bar{background:#404040;height:5px;border-radius:4px;transition:width 0.4s ease}
+.section-header{background:#404040;color:#fff;padding:0.75rem 1.25rem;border-radius:8px 8px 0 0;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;display:flex;justify-content:space-between;align-items:center}
+.section-body{background:#fff;border:0.5px solid #dde3e8;border-top:none;border-radius:0 0 8px 8px;padding:1rem 1.25rem}
+.q-item{padding:1rem 0;border-bottom:0.5px solid #f0f3f5}
+.q-item:last-child{border-bottom:none}
+.q-text{font-size:14px;font-weight:400;text-align:center;margin-bottom:0.75rem;color:#1a1a1a;line-height:1.5}
+.scale-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.scale-label{font-family:'Segoe UI',system-ui,sans-serif;font-size:10px;color:#999;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap}
+.radio-group{display:flex;gap:8px}
+.radio-group input[type=radio]{display:none}
+.radio-group label{width:30px;height:30px;border-radius:50%;border:1.5px solid #c5cdd4;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.radio-group input[type=radio]:checked+label{background:#404040;border-color:#404040}
+.radio-group label:hover{border-color:#404040;background:#f0f2f4}
+.btn{background:#404040;color:#fff;border:none;padding:0.6rem 1.6rem;border-radius:6px;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background 0.15s;letter-spacing:0.03em}
+.btn:hover{background:#2a2a2a}
+.btn:disabled{background:#aaa;cursor:not-allowed}
+.btn-outline{background:transparent;color:#404040;border:1.5px solid #404040;padding:0.5rem 1.2rem;border-radius:6px;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;cursor:pointer;transition:all 0.15s}
+.btn-outline:hover{background:#f0f2f4}
+.btn-email{background:#404040;color:#fff;border:none;padding:0.65rem 1.8rem;border-radius:6px;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background 0.15s;letter-spacing:0.03em;display:inline-flex;align-items:center;gap:8px}
+.btn-email:hover{background:#2a2a2a}
+
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:1.25rem}
+.page-indicator{font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:#999}
+
+/* Intro / registration */
+.intro-card{background:#fff;border:0.5px solid #dde3e8;border-radius:12px;padding:2.5rem 2rem}
+.intro-card h1{font-size:26px;font-weight:400;margin:1rem 0 0.75rem;letter-spacing:0.02em;text-align:center}
+.intro-card .subtitle{font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;color:#999;letter-spacing:0.1em;text-transform:uppercase;text-align:center}
+.intro-card .desc{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:#555;line-height:1.8;margin-bottom:1.5rem;text-align:center}
+.reg-divider{height:0.5px;background:#e8eaec;margin:1.5rem 0}
+.reg-heading{font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;color:#888;margin-bottom:1rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:#555;margin-bottom:4px;letter-spacing:0.02em}
+.form-group .req{color:#cf8282;margin-left:2px}
+.form-group input{width:100%;padding:9px 11px;border:0.5px solid #ccc;border-radius:6px;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;color:#1a1a1a;background:#fff;transition:border 0.15s}
+.form-group input:focus{outline:none;border-color:#404040}
+.form-group input.error{border-color:#cf8282}
+.field-error{font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;color:#cf8282;margin-top:3px;display:none}
+.field-error.show{display:block}
+.intro-footer{text-align:center;margin-top:1.5rem}
+
+/* Assessment */
+.result-divider{height:0.5px;background:#e8eaec;margin:1.75rem 0}
+.rs-heading{font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;font-weight:600;color:#888;padding-bottom:0.6rem;border-bottom:1px solid #e0e4e8;margin-bottom:1rem}
+.result-header{border-radius:12px 12px 0 0;padding:2.5rem 2rem;text-align:center}
+.result-header .type-num{font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.5rem;opacity:0.75}
+.result-header h2{font-size:32px;font-weight:400;margin-bottom:0.4rem;letter-spacing:0.02em}
+.result-header .tagline{font-size:15px;opacity:0.85;font-style:italic}
+.result-header .greeting{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;opacity:0.8;margin-bottom:0.5rem}
+.result-body{background:#fff;border:0.5px solid #dde3e8;border-top:none;border-radius:0 0 12px 12px;padding:2rem}
+.core-profile-text{font-size:14px;line-height:1.85;color:#2a2a2a}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.col-heading{font-family:'Segoe UI',system-ui,sans-serif;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;color:#888;padding-bottom:0.5rem;border-bottom:1px solid #e0e4e8;margin-bottom:0.75rem}
+.bullet-list{list-style:none;padding:0}
+.bullet-list li{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;color:#333;line-height:1.6;padding:3px 0 3px 14px;position:relative}
+.bullet-list li::before{content:'•';position:absolute;left:0;color:#aaa}
+.prose-section{margin-bottom:1.75rem}
+.prose-section p{font-size:14px;line-height:1.85;color:#2a2a2a}
+.wings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.wing-card{border:1px solid #e0e4e8;border-radius:8px;padding:1rem 1.1rem;background:#fafafa}
+.wing-card.dominant{border-width:2px}
+.wing-card-title{font-family:'Segoe UI',system-ui,sans-serif;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem}
+.dominant-badge{display:inline-block;font-family:'Segoe UI',system-ui,sans-serif;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;letter-spacing:0.04em}
+.wing-card p{font-size:13px;line-height:1.7;color:#444;font-family:'Segoe UI',system-ui,sans-serif}
+.stress-growth-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.sg-card{border-radius:8px;padding:1rem 1.1rem}
+.sg-card-title{font-family:'Segoe UI',system-ui,sans-serif;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem}
+.sg-card p{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;line-height:1.7;color:#333}
+.sg-stress{background:#fdf0f0;border:0.5px solid #f0d0d0}
+.sg-growth{background:#f0faf4;border:0.5px solid #c0e4cc}
+.score-chart{display:flex;flex-direction:column;gap:5px;margin:0.75rem 0}
+.score-row{display:flex;align-items:center;gap:8px}
+.score-row .t-label{font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;color:#666;width:52px;flex-shrink:0}
+.score-row .bar-wrap{flex:1;background:#eef2f5;border-radius:3px;height:10px}
+.score-row .bar{height:10px;border-radius:3px;transition:width 0.6s ease}
+.score-row .s-val{font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;color:#999;width:36px;text-align:right;flex-shrink:0}
+
+/* Demographics */
+.demo-section{background:#fff;border:0.5px solid #dde3e8;border-radius:12px;padding:1.75rem;margin-bottom:1.25rem}
+.demo-section h3{font-size:17px;font-weight:400;margin-bottom:1.25rem}
+.form-group select{width:100%;padding:8px 10px;border:0.5px solid #ccc;border-radius:6px;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;background:#fff;color:#1a1a1a}
+.checkbox-group{display:flex;flex-direction:column;gap:7px}
+.checkbox-group label{display:flex;align-items:center;gap:8px;font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;color:#333;cursor:pointer}
+.checkbox-group input[type=checkbox]{width:14px;height:14px;cursor:pointer;accent-color:#404040}
+
+/* Email CTA */
+.email-cta{background:#f8f9fa;border:0.5px solid #e0e4e8;border-radius:10px;padding:1.5rem;text-align:center;margin-top:1.25rem}
+.email-cta h4{font-size:16px;font-weight:400;margin-bottom:0.5rem;letter-spacing:0.01em}
+.email-cta p{font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;color:#666;line-height:1.6;margin-bottom:1.25rem}
+.result-actions{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-top:1.25rem}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="logo-wrap">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOxAAADsQBlSsOGwAAIABJREFUeJzs3X98XNldH/zP94zs9f7yXDm7sSxb0rUUyLJ9snvmOoGQAJbTQLOEdmV+JtCy8hMKSWmxltJC+fFYbguFwoO1tNCkECyTAIHy1HL6PDS/wDIQ2EB25jobNoSsrCvJXmtJiGbs9WZ3rTnf5449VxqNZqQZzZ258+P7fr38sjWauffYkvWdc873fL+AEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgjRHirsAQghhGh9AwMDBymKfweibwfAMP9ZIX+WqJ9R9StX5p5//m/iHqMQ3U4CuhBCiKoNDAw8QkTDiqifAQNgmL8FoC9Rjt8C4XcS8FcA/J8TkcdBYwKGMFkPoYLLqrqzxoThAAAAA3RSTlMAAEDu7u7u7u7u7oD///////////////////////////////////////////////////////8AAAD/gAAAAAAAAAAAAAAAAAAAAAD/AP8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf//AP8A/wAAAAAAAAAAAAAAAAAAAAAAAA==
+" alt="ECHO logo" style="width:90px;height:90px;object-fit:contain;mix-blend-mode:multiply;filter:invert(1) contrast(0.7) brightness(1.4)">
+  </div>
+  <div style="height:0.5rem"></div>
+
+  <!-- ── INTRO / REGISTRATION ── -->
+  <div id="intro-screen">
+    <div class="intro-card">
+      <div class="subtitle">Echo Enneagram Assessment</div>
+      <h1>Discover Your Type</h1>
+      <p class="desc">Discover your personality type through 100 reflective statements. Answer honestly — there are no right or wrong responses.<br><br>Allow 15–30 minutes to answer the questions. For each statement, rate how accurately it describes you.</p>
+
+      <div class="reg-divider"></div>
+      <div class="reg-heading">Your details</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>First name <span class="req">*</span></label>
+          <input type="text" id="reg-first" placeholder="e.g. Sarah" oninput="clearErr('reg-first')">
+          <div class="field-error" id="err-first">Please enter your first name</div>
+        </div>
+        <div class="form-group">
+          <label>Surname <span class="req">*</span></label>
+          <input type="text" id="reg-last" placeholder="e.g. Johnson" oninput="clearErr('reg-last')">
+          <div class="field-error" id="err-last">Please enter your surname</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email address <span class="req">*</span></label>
+        <input type="email" id="reg-email" placeholder="e.g. sarah@example.com" oninput="clearErr('reg-email')">
+        <div class="field-error" id="err-email">Please enter a valid email address</div>
+      </div>
+      <div class="form-group">
+        <label>Contact number <span style="font-family:'Segoe UI',system-ui,sans-serif;font-size:11px;color:#aaa">(optional, include country code)</span></label>
+        <input type="tel" id="reg-phone" placeholder="e.g. +27 82 123 4567">
+      </div>
+
+      <div class="intro-footer">
+        <button class="btn" onclick="validateAndStart()">Begin Assessment →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ASSESSMENT ── -->
+  <div id="assessment-screen" style="display:none">
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+
+    <div class="section-header">
+      <span id="section-title">Section 1 of 10</span>
+      <span id="section-label"></span>
+    </div>
+    <div class="section-body" id="section-body"></div>
+    <div class="nav-row">
+      <button class="btn-outline" id="prev-btn" onclick="prevSection()" style="display:none">← Back</button>
+      <span class="page-indicator" id="page-indicator"></span>
+      <button class="btn" id="next-btn" onclick="nextSection()">Next →</button>
+    </div>
+  </div>
+
+  <!-- ── DEMOGRAPHICS ── -->
+  <div id="demo-screen" style="display:none">
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:93%"></div></div>
+    <div class="demo-section">
+      <h3>Almost there — a few final questions</h3>
+      <div class="form-group">
+        <label>How satisfied are you with your current job?</label>
+        <select id="job-sat"><option value="">Select...</option>
+          <option>Very unsatisfied</option><option>Somewhat unsatisfied</option>
+          <option>Neither satisfied nor unsatisfied</option>
+          <option>Somewhat satisfied</option><option>Very satisfied</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Which does your current job provide? (select all that apply)</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox"> Autonomy &amp; Independence</label>
+          <label><input type="checkbox"> Meaning &amp; Purpose</label>
+          <label><input type="checkbox"> Career Advancement</label>
+          <label><input type="checkbox"> Connection &amp; Community</label>
+          <label><input type="checkbox"> Intellectual Challenge</label>
+          <label><input type="checkbox"> Job Security &amp; Stability</label>
+          <label><input type="checkbox"> Creativity &amp; Self-Expression</label>
+          <label><input type="checkbox"> Variety &amp; Excitement</label>
+          <label><input type="checkbox"> Work-Life Balance</label>
+          <label><input type="checkbox"> Financial Compensation</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>What industry do you work in?</label>
+        <select id="industry"><option value="">Select...</option>
+          <option>Finance &amp; Banking</option><option>Technology</option><option>Healthcare</option>
+          <option>Education</option><option>Human Resources / People</option><option>Sales &amp; Marketing</option>
+          <option>Legal</option><option>Creative / Arts</option><option>Non-profit</option>
+          <option>Retail / Service</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>How long have you been in your current job?</label>
+        <select id="tenure"><option value="">Select...</option>
+          <option>Less than 1 year</option><option>1–3 years</option><option>3–5 years</option>
+          <option>5–10 years</option><option>More than 10 years</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Age</label>
+        <select id="age"><option value="">Select...</option>
+          <option>Under 25</option><option>25–34</option><option>35–44</option>
+          <option>45–54</option><option>55+</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Gender</label>
+        <select id="gender"><option value="">Select...</option>
+          <option>Female</option><option>Male</option><option>Non-binary</option><option>Prefer not to say</option>
+        </select>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-outline" onclick="showSection(9)">← Back</button>
+      <button class="btn" onclick="showResults()">View My Results →</button>
+    </div>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div id="result-screen" style="display:none">
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:100%"></div></div>
+    <div id="result-header" class="result-header"></div>
+    <div class="result-body" id="result-body"></div>
+    <div class="email-cta">
+      <h4>Would you like a more detailed report?</h4>
+      <p>Request a full personalised report based on your results. We will be in touch within 2–3 business days.</p>
+      <button class="btn-email" onclick="requestReport()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        Request Detailed Report
+      </button>
+    </div>
+    <div class="result-actions">
+      <button class="btn-outline" onclick="restartAssessment()">Retake Assessment</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── QUESTION BANK ─────────────────────────────────────── */
+const Q=[
+  {q:"I strive for perfection",t:1,w:3},
+  {q:"I work hard to be helpful to others",t:2,w:2},
+  {q:"It is important to me that other people like me",t:3,w:2},
+  {q:"It is important to me to achieve great things",t:3,w:2},
+  {q:"I feel I contribute more than most people around me",t:3,w:2},
+  {q:"I feel my emotions very deeply",t:4,w:3},
+  {q:"I have a sense that other people will never truly understand me",t:4,w:3},
+  {q:"I prefer to understand things thoroughly before acting",t:5,w:2},
+  {q:"I like to be prepared for things that could go wrong",t:6,w:2},
+  {q:"I actively look for ways to avoid pain or discomfort",t:7,w:2},
+  {q:"I seek out experiences that make me feel happy or excited",t:7,w:2},
+  {q:"I naturally see the positive side of most situations",t:7,w:1},
+  {q:"I am not afraid to challenge someone when I think they are wrong",t:8,w:3},
+  {q:"I tend to go along with what others want rather than push for my own preferences",t:9,w:3},
+  {q:"I believe having clear rules helps things run better",t:1,w:2},
+  {q:"Security and stability matter more to me than most people realise",t:6,w:3},
+  {q:"I often think about what could happen in the future",t:6,w:2},
+  {q:"I have always felt a little different from most people around me",t:4,w:3},
+  {q:"I prefer familiar ways of doing things over new approaches",t:9,w:2},
+  {q:"I follow through on commitments even when it is difficult",t:1,w:2},
+  {q:"I am constantly looking for ways to improve myself",t:1,w:3},
+  {q:"I check my work carefully to catch errors before others do",t:1,w:3},
+  {q:"I find real satisfaction in being there for the people I care about",t:2,w:2},
+  {q:"I like being seen as someone important or central in my social circle",t:2,w:2},
+  {q:"Being successful is genuinely important to me",t:3,w:3},
+  {q:"The groups and teams I belong to would struggle without my involvement",t:2,w:2},
+  {q:"My emotions can feel overwhelming at times",t:4,w:2},
+  {q:"I have always felt a bit like an outsider",t:4,w:3},
+  {q:"I enjoy analysing things from multiple angles before drawing conclusions",t:5,w:2},
+  {q:"I always have a backup plan in case things go wrong",t:6,w:3},
+  {q:"I try to steer clear of situations that bring up difficult feelings",t:7,w:3},
+  {q:"I enjoy seeking out new and exciting experiences",t:7,w:2},
+  {q:"I am good at helping others see the brighter side of a situation",t:7,w:1},
+  {q:"I do not hesitate to speak up when someone is behaving badly",t:8,w:3},
+  {q:"I prefer to keep the peace rather than push for what I want",t:9,w:3},
+  {q:"I feel uncomfortable when people break agreed-upon rules or norms",t:1,w:2},
+  {q:"I look for people or structures that can offer me a sense of safety",t:6,w:2},
+  {q:"I spend a lot of energy thinking about what could go wrong",t:6,w:3},
+  {q:"Others sometimes find me a bit unconventional or hard to read",t:4,w:2},
+  {q:"I find comfort in routine and doing things the way I have always done them",t:9,w:2},
+  {q:"I keep going until the job is done properly",t:1,w:2},
+  {q:"I spend real time examining my own flaws and trying to fix them",t:1,w:3},
+  {q:"I hold myself to very high personal standards",t:1,w:3},
+  {q:"Looking after others comes naturally to me",t:2,w:2},
+  {q:"I want people to admire and respect me",t:3,w:3},
+  {q:"I set big goals for myself and pursue them seriously",t:3,w:2},
+  {q:"Honestly, I sometimes feel I am a bit more capable than those around me",t:2,w:2},
+  {q:"I carry a deep sense of loss or longing that is hard to explain",t:4,w:3},
+  {q:"I see myself as someone who is genuinely different or unique",t:4,w:3},
+  {q:"I enjoy going deeper into topics than most people are willing to go",t:5,w:3},
+  {q:"Being prepared for emergencies gives me real peace of mind",t:6,w:2},
+  {q:"When difficult feelings come up I find ways to distract myself",t:7,w:3},
+  {q:"I often change direction when things start feeling repetitive or dull",t:7,w:2},
+  {q:"I tend to be more optimistic than most people I know",t:7,w:2},
+  {q:"I say what I think, even when it is hard for others to hear",t:8,w:3},
+  {q:"I would rather go along with the group than create friction",t:9,w:3},
+  {q:"I feel most at ease in environments with clear expectations and structure",t:1,w:2},
+  {q:"I actively protect myself and the people I care about from harm",t:6,w:2},
+  {q:"I tend to plan well into the future",t:6,w:2},
+  {q:"I see myself as a one-of-a-kind person",t:4,w:2},
+  {q:"I resist change, preferring things to stay as they are",t:9,w:2},
+  {q:"I focus on doing what needs to be done, even when I do not feel like it",t:1,w:2},
+  {q:"I read and learn specifically to become better at what I do",t:3,w:1},
+  {q:"I put real pressure on myself to get things right",t:1,w:3},
+  {q:"I take the initiative to make life easier for the people around me",t:2,w:3},
+  {q:"I put real effort into making a good impression",t:3,w:2},
+  {q:"I set ambitious targets and push hard to reach them",t:3,w:2},
+  {q:"Being a valued and central person in a group matters to me",t:2,w:2},
+  {q:"I can describe my emotional experience in a lot of depth",t:4,w:2},
+  {q:"I often feel like I do not quite belong",t:4,w:3},
+  {q:"I find the inner workings of my own mind fascinating",t:5,w:3},
+  {q:"I am constantly aware of what could go wrong in any situation",t:6,w:3},
+  {q:"I have many ways of keeping difficult emotions at bay",t:7,w:2},
+  {q:"I am nearly always up for a new adventure",t:7,w:2},
+  {q:"I genuinely believe things will work out in the end",t:7,w:1},
+  {q:"I stand up for what I believe in, even if it upsets people",t:8,w:3},
+  {q:"I tend to let others lead rather than pushing my own agenda",t:9,w:2},
+  {q:"I dislike it when people ignore rules or norms that others follow",t:1,w:2},
+  {q:"I build alliances with people who can help keep me safe and supported",t:6,w:2},
+  {q:"I am often already thinking about what is coming next",t:7,w:2},
+  {q:"My interests and way of seeing the world set me apart from others",t:5,w:2},
+  {q:"I believe the tried-and-tested way is usually the best way",t:9,w:2},
+  {q:"I take my responsibilities seriously and see them through",t:6,w:1},
+  {q:"I have a lot of plans in place for how to improve myself",t:1,w:2},
+  {q:"Getting even small details right matters a great deal to me",t:1,w:3},
+  {q:"I genuinely enjoy caring for others and attending to their needs",t:2,w:3},
+  {q:"I want to be someone others look up to",t:3,w:2},
+  {q:"I push myself hard to succeed",t:3,w:2},
+  {q:"I contribute meaningfully to my community or workplace",t:2,w:1},
+  {q:"I do not experience emotions as strongly as most people seem to",t:5,w:2},
+  {q:"I rarely feel like I truly belong in the groups I am part of",t:4,w:2},
+  {q:"I want to understand as much as possible about how the world works",t:5,w:3},
+  {q:"I always try to understand what could go wrong before committing",t:6,w:2},
+  {q:"I take steps to make sure I do not end up feeling sad or empty",t:7,w:2},
+  {q:"Trying new things is one of the things that keeps life interesting for me",t:7,w:2},
+  {q:"I tend to have a positive and upbeat outlook on life",t:7,w:1},
+  {q:"When something is unjust I am usually the first to say so",t:8,w:2},
+  {q:"I find it easier to follow than to lead",t:9,w:2},
+  {q:"I believe everyone has a responsibility to do their part properly",t:1,w:2},
+  {q:"I keep a close eye on things that could threaten what I have built",t:6,w:2}
+];
+
+const TC=["","#EBDED4","#d3b1c2","#d2bcd8","#b6ccd7","#a8a5a5","#ebc4c4","#9fc7aa","#cf8282","#efe2ac"];
+const TT=["","#4a3a2a","#4a2a3a","#3a2a4a","#1a3a4a","#2a2a2a","#4a1a1a","#1a4a2a","#4a1a1a","#3a3010"];
+const SG={1:{s:4,g:7},2:{s:8,g:4},3:{s:9,g:6},4:{s:2,g:1},5:{s:7,g:8},6:{s:3,g:9},7:{s:1,g:5},8:{s:5,g:2},9:{s:6,g:3}};
+const TN=["","The Improver","The Helper","The Performer","The Romantic","The Investigator","The Loyalist","The Enthusiast","The Challenger","The Peacemaker"];
+const TG=["","I am good, and I strive to be better.","I am loving, and I give generously to others.","I am successful, and I deliver results.","I am unique, and I feel everything deeply.","I understand the world by observing it deeply.","I am prepared, and I stand by those I trust.","I embrace life fully and keep possibility alive.","I am strong, and I protect those I love.","I create harmony and I see all sides."];
+
+const TD={
+  1:{profile:"You are principled, responsible, and driven by a deep need to do things right. At your best you are a voice of integrity — the person who holds the line when others let things slide, who notices what is broken and wants to fix it. You experience the world through a constant inner sense of how things should be, and the gap between what is and what could be weighs on you more than others realise. You fear being wrong, flawed, or at fault — and so you hold yourself to standards that others rarely impose on themselves. This inner critic is both your greatest motivation and your heaviest burden.",
+  strengths:["Strong sense of integrity and ethics","Reliable, thorough, and hardworking","Excellent eye for detail and quality","Principled and fair-minded with others","Natural drive to improve things around them","Clear sense of right and wrong"],
+  growth:["Inner critic can be relentless and exhausting","Resentment builds when others don't meet your standards","Can come across as rigid or preachy","Struggles to relax and enjoy without 'earning' it","May set expectations that are hard for others to meet","Difficulty accepting that good enough is sometimes enough"],
+  relationships:"You are a loyal, devoted partner and friend who expresses love through doing — making sure things work, showing up consistently, handling what needs handling. But the people closest to you may feel like they can never quite get things right. You notice imperfections everywhere, including in the people you love, and it takes real work not to let that show. Learning to say 'this is good enough' — and meaning it — is one of the most loving things you can offer in a relationship.",
+  work:"You are the person others rely on to deliver quality. You set high standards, follow through, and do not cut corners — even when no one is watching. You do well in roles that require precision, ethics, and thoroughness: compliance, law, finance, HR, quality assurance, or any environment where getting things right matters. Watch out for perfectionism that slows you down or creates tension with colleagues who operate with less precision than you.",
+  stress:{num:4,text:"Under pressure, you can become unusually focused on what is missing, what has gone wrong, and what others have that you don't. You may withdraw, become moody or self-critical, and feel that your efforts will never be enough. This is your signal to slow down — not to work harder."},
+  growth_dir:{num:7,text:"When you are in a good place, you loosen up. You become more spontaneous, more playful, and more willing to let things be imperfect. This is not a loss of standards — it is the reward for all the work you do."},
+  wings:{w9:{num:9,name:"The Accepting Improver",desc:"With a Nine influence, you are calmer, less visibly critical, and more philosophical about imperfection. You hold high standards internally but are less likely to impose them on others. You come across as steady and gentle — principled but not pushy."},w2:{num:2,name:"The Caring Improver",desc:"With a Two influence, you channel your high standards into helping others grow. You are warm and service-oriented, but can become resentful when your efforts go unrecognised. You care deeply about doing things right — and about the people you are doing them for."}}},
+  2:{profile:"You are warm, generous, and deeply attuned to the people around you. You have a remarkable ability to sense what others need — sometimes before they know it themselves — and you feel most alive when you are genuinely useful to someone you care about. But beneath the giving is a quieter truth: you fear that if you stopped being helpful, stopped being needed, you might not be loved at all. This belief drives enormous generosity, and it also drives a quiet form of exhaustion, because you give from a place of need as much as a place of abundance.",
+  strengths:["Deeply empathic and emotionally attuned","Warm, generous, and encouraging by nature","Natural at building and sustaining relationships","Remembers what matters to the people around them","Loyal, celebratory, and devoted","Creates a sense of belonging wherever they go"],
+  growth:["Gives with hidden expectations attached","Struggles to identify and ask for own needs","Can become a martyr when unappreciated","Reads others' feelings better than their own","May prioritise connection over honesty","Pride in being indispensable can drive manipulation"],
+  relationships:"You are the person who shows up. You remember birthdays, notice when something is wrong, and move toward people in pain when others back away. Your love is tangible and real. But relationships also need you to receive — to let yourself be cared for, to say what you need directly rather than hoping it will be intuited. The people who love you want to give back; you just have to let them.",
+  work:"You bring warmth, relational intelligence, and genuine care to any team or organisation. You are excellent in people-facing roles — HR, counselling, healthcare, teaching, social work, customer success — anywhere that genuine human connection matters. Your challenge is saying no. You overextend easily, take on others' emotional weight, and can quietly burn out while still appearing fine.",
+  stress:{num:8,text:"Under pressure, you can become uncharacteristically aggressive, demanding, or controlling — the opposite of your usual warmth. You may become blunt, push people away, or act out of frustration at not feeling appreciated. This is a sign that your own needs have been neglected for too long."},
+  growth_dir:{num:4,text:"When life is good, you become more aware of your own inner world — your own feelings, needs, and creative impulses. You stop needing others' approval to feel okay about yourself. This is a glimpse of who you are when you are free."},
+  wings:{w1:{num:1,name:"The Principled Helper",desc:"With a One influence, your helping is purposeful and ethical — you care about doing things the right way, not just the kind way. You have clearer limits than most Twos, are more self-critical, and may find it harder to accept imperfection in how you give."},w3:{num:3,name:"The Ambitious Helper",desc:"With a Three influence, you are more outwardly driven and image-conscious. You may be drawn to visible roles of service or leadership, and you are highly effective in professional contexts. You care about being seen as both capable and caring."}}},
+  3:{profile:"You are driven, charismatic, and extraordinarily good at getting things done. You move through the world with confidence and a clear sense of direction — and you naturally inspire others to move with you. But beneath the polished surface is a quiet and persistent fear: that if you stopped achieving, stopped succeeding, stopped performing — people would stop valuing you. So you shape yourself into whoever the room needs you to be, and over time it can become genuinely hard to know where the performance ends and where you begin.",
+  strengths:["Highly goal-oriented and results-focused","Adaptable and excellent at reading what a situation needs","Charismatic, confident, and naturally inspiring","Efficient and energised by delivering outcomes","Visionary — able to rally people toward a goal","Resilient and optimistic in the face of setbacks"],
+  growth:["Can lose touch with who they are beneath the image","Treats feelings as obstacles rather than information","Relationships can feel managed rather than genuine","Prone to overworking and difficulty switching off","May cut ethical corners under pressure","Tends to define worth entirely through achievement"],
+  relationships:"You are charming, attentive, and fun to be around — when you are present. The challenge is that deep intimacy requires being seen without achievement attached, and that can feel exposing. The people who love you do not want the polished version; they want the real one — with doubts, feelings, and uncertainties included. Learning to show that side is some of the bravest work you can do.",
+  work:"You are in your element at work — setting targets, leading teams, closing deals, building things. Sales, entrepreneurship, law, leadership, communications — anywhere achievement is visible and rewarded is where you thrive. The risk is confusing who you are with what you deliver. When results dip, your sense of self can too. Separating the two is not weakness — it is what makes you sustainable.",
+  stress:{num:9,text:"Under pressure, you may lose your usual drive and become listless, disengaged, or oddly passive — going through the motions without real energy or direction. This is a signal that you have been running too hard and need to reconnect with what actually matters to you, not just what looks good."},
+  growth_dir:{num:6,text:"When you are thriving, you become more genuinely connected — to your team, your values, and something bigger than personal success. You become less competitive and more collaborative, less focused on how you look and more focused on whether what you are doing actually matters."},
+  wings:{w2:{num:2,name:"The Charming Performer",desc:"With a Two influence, you are warmer, more relational, and more motivated by being liked as well as admired. You inspire through genuine connection as much as through results. You are deeply invested in the people around you — though you may still struggle to let them truly know you."},w4:{num:4,name:"The Creative Performer",desc:"With a Four influence, you have more emotional depth and a stronger pull toward authenticity and meaningful work. You may feel more conflicted about your image and more drawn to creative or expressive fields. The tension between wanting to succeed and wanting to be real is particularly alive in you."}}},
+  4:{profile:"You are one of the most emotionally honest and creatively alive people in the room — and also one of the most restless. You feel things at a depth that others rarely reach, and you have a gift for turning that depth into something beautiful, whether through art, words, conversation, or simply the way you see the world. But you carry a quiet but persistent belief that something essential is missing in you — something others seem to have — and that until you find it you will never quite belong. This longing drives your creativity and your empathy, and it also keeps you at a slight distance from the life that is right in front of you.",
+  strengths:["Deeply emotionally honest and self-aware","Highly creative with a distinctive personal voice","Able to sit with pain — their own and others' — without flinching","Authenticity is non-negotiable; they see through pretence instantly","Turn personal experience into meaning and beauty","Bring remarkable depth and originality to everything they do"],
+  growth:["Can become absorbed in longing for what is missing","Fantasy is often more compelling than reality","Envy runs quietly beneath the surface","Moods can be intense and difficult to manage","May withdraw when life feels too ordinary","Needs to learn that belonging begins with showing up"],
+  relationships:"You are capable of extraordinary intimacy — present, honest, and willing to go to the emotional places others avoid. But the push-pull dynamic — drawing someone close and then finding reasons to push them away — can exhaust even devoted partners. The most radical thing you can do in a relationship is stay. Not in the dramatic moment, but in the ordinary Tuesday evening when nothing is beautifully painful and everything is just fine.",
+  work:"You bring depth, originality, and emotional intelligence to whatever you do. Creative fields — writing, design, therapy, counselling, the arts, spiritual direction — are natural homes. But any role that allows you to bring your full self and do something that genuinely matters will work. Structure helps you more than you expect. Finishing things is one of the most transformative acts available to you.",
+  stress:{num:2,text:"Under pressure, you can become uncharacteristically focused on others' needs and approval — over-giving, seeking reassurance, and attaching your sense of worth to how well you are received by those around you. Underneath this is usually a spike in fear that you are not enough."},
+  growth_dir:{num:1,text:"When life is going well, you become more disciplined, more focused, and more able to turn your ideas and feelings into something real and finished. The creative work moves from longing to doing. This is when your gifts become most visible to the world."},
+  wings:{w3:{num:3,name:"The Expressive Romantic",desc:"With a Three influence, you are more outwardly driven and productively creative. You channel your emotional depth into visible work — performance, writing, creative leadership — and are more motivated by recognition and impact. You are more social than a typical Four."},w5:{num:5,name:"The Introspective Romantic",desc:"With a Five influence, you are more introverted, intellectually oriented, and privately intense. You process your inner world through observation, research, and solitude. You are highly selective about who you let in and may be more comfortable expressing yourself through writing or art than through direct conversation."}}},
+  5:{profile:"You are one of the most observant and analytically sharp people in the room — someone who understands things at a depth that others rarely bother to reach. You experience the world as requiring more of you than you have to give, so your instinct is to pull back: to watch before engaging, to understand before committing, to have enough knowledge and competence before stepping in. You protect your time, your energy, and your inner life carefully — and this gives you a quality of thought that is genuinely rare. The cost is a life lived slightly at a distance, where the richest experiences happen inside your head rather than in your actual relationships.",
+  strengths:["Brilliant analytical and conceptual mind","Calm and objective under pressure","Deep expert in areas they care about","Observant and perceptive in ways others miss","Pioneers new thinking and unconventional ideas","Honest and precise — says only what they mean"],
+  growth:["Observation can become a substitute for participation","Emotional world is processed privately and often late","Can come across as cold, withholding, or unavailable","World shrinks as withdrawal deepens over time","Hoards time, energy, and information rather than sharing","May underestimate how much others need and value their presence"],
+  relationships:"You are quietly loyal, intensely curious about the people you love, and capable of surprising warmth and humour in trusted relationships. But you process feelings privately and often long after the moment has passed — which can leave partners feeling like they are on the outside of your inner life. Sharing yourself — not just your ideas, but your feelings, your doubts, your actual experience — is the thing that builds the closeness you quietly want.",
+  work:"You are the person who thinks more carefully than anyone else in the room and brings an unusual depth of knowledge to whatever you take on. Research, science, technology, strategy, analysis, philosophy, academia — any field that rewards genuine expertise and independent thought is a natural home. The challenge is translating your inner richness into visible contribution — and trusting that your presence and knowledge are worth sharing.",
+  stress:{num:7,text:"Under pressure, you can become scattered, frenetic, and out of character — jumping between ideas, making impulsive decisions, and seeking distraction rather than the solitude you usually prefer. This is a signal that your resources feel depleted and your usual strategies are not working."},
+  growth_dir:{num:8,text:"When you are at your best, you become more decisive, more present, and more willing to put your knowledge and insight into action in the world. You stop watching from the sidelines and step in. This is when your depth becomes genuinely powerful."},
+  wings:{w4:{num:4,name:"The Creative Investigator",desc:"With a Four influence, you are more emotionally tuned in, creatively expressive, and drawn to questions of meaning. You may write, create, or explore the inner world as deeply as the outer one. You feel more — and may experience more melancholy — than a typical Five."},w6:{num:6,name:"The Loyal Investigator",desc:"With a Six influence, you are more socially aware, collaborative, and loyal to trusted people and groups. You tend to be more practically minded and may carry more anxiety than a typical Five. You value being part of a small, dependable team."}}},
+  6:{profile:"You are one of the most loyal, perceptive, and genuinely trustworthy people others will meet. You see risk where others see none, ask the questions no one else thinks to ask, and hold communities together through sheer consistency and commitment. But underneath this reliability is a mind that rarely rests. You scan for threat, test for loyalty, and prepare for outcomes that may never arrive — because the world has taught you that safety is not a given, and that relying too completely on your own judgment is dangerous. The courage you demonstrate every day — in spite of this — is one of your most underrated qualities.",
+  strengths:["Fiercely loyal and dependable","Excellent at anticipating problems before they arise","Collaborative, fair-minded, and team-oriented","Asks the hard questions others are afraid to raise","Warm, self-aware, and often genuinely funny","Courageous when they believe in something"],
+  growth:["Anxious mind rarely fully rests","Can oscillate between blind trust and sudden suspicion","May project threat where little or none exists","Tends to second-guess decisions long after they are made","Can undermine own authority by seeking too much reassurance","Worst-case thinking can exhaust those around them"],
+  relationships:"You are the most loyal friend or partner most people will ever have. Once you trust someone, you are with them through everything. What you need in return is consistency — people who mean what they say and say what they mean, who show up reliably and do not create uncertainty. You do not need perfection; you need honesty and follow-through. And you need the occasional reminder that the dark outcome you are imagining is not yet the reality.",
+  work:"You are the person who makes teams safer, smarter, and more honest. You ask the uncomfortable questions, notice the blind spots, and hold the line on commitments. You thrive in structured, mission-driven environments with trustworthy leadership — law, compliance, HR, project management, healthcare. Your challenge is trusting your own judgment enough to act on it without needing everyone else's buy-in first.",
+  stress:{num:3,text:"Under pressure, you can become uncharacteristically focused on image and performance — pushing harder, presenting a capable front, and avoiding any sign of doubt or vulnerability. Underneath this is usually a sharp spike in the fear that things are falling apart."},
+  growth_dir:{num:9,text:"When you are in a genuinely good place, you relax. The mental noise quietens. You stop scanning for threat and allow yourself to simply be present in your life. This is not naivety — it is the reward for all the vigilance you carry."},
+  wings:{w5:{num:5,name:"The Analytical Loyalist",desc:"With a Five influence, you are more introverted, intellectually driven, and self-contained. You manage anxiety through research, preparation, and deep expertise. You can seem reserved or serious, and you prefer to trust your own thinking over others' opinions — which is both your strength and your challenge."},w7:{num:7,name:"The Sociable Loyalist",desc:"With a Seven influence, you are more outgoing, warm, and quick to reframe difficulties with humour and optimism. You still carry anxiety, but you tend to move toward people rather than withdraw. You can appear surprisingly carefree, and your enthusiasm makes you someone others enjoy being around."}}},
+  7:{profile:"You are one of the most energising, visionary, and genuinely life-giving people in any room. You see possibility everywhere, synthesise ideas at speed, and bring a quality of enthusiasm that makes people feel that anything is achievable. But beneath this vitality is a pattern that takes courage to look at honestly: you are very good at moving away from pain. When things get heavy or hard or simply repetitive, you move — toward the next idea, the next experience, the next plan. The things you most need to heal are often the things you are most skilled at outrunning.",
+  strengths:["Energetic, enthusiastic, and genuinely joyful","Brilliant at generating ideas and seeing connections","Spontaneous, imaginative, and inspiring to others","Able to reframe difficulties quickly and constructively","Natural entrepreneur, storyteller, and innovator","Makes life feel larger and more possible for those around them"],
+  growth:["Avoids pain through constant movement and planning","Can be unconsciously hurtful when others need them to stay","Prone to starting things and not finishing them","Insatiability — more is never quite enough","Commitment feels like a loss of freedom","Unprocessed pain tends to resurface unexpectedly"],
+  relationships:"You are fun, generous, and genuinely exciting to be with. But intimacy requires staying when things get hard or heavy or just ordinary — and that is the part that does not come naturally to you. The most powerful thing you can offer a partner is not the adventure; it is the willingness to be present in the mundane Tuesday evenings without planning your way out of them.",
+  work:"You thrive in dynamic, creative environments where variety and ideas are valued — startups, communications, consulting, innovation, entertainment, entrepreneurship. You generate more ideas in an hour than most people do in a week. The challenge is the middle phase of any project: when the excitement has passed but the finish line is not yet in sight. Building a tolerance for that phase is what separates the ideas you have from the impact you make.",
+  stress:{num:1,text:"Under pressure, you can become uncharacteristically critical, perfectionistic, and rigid — finding fault with everyone and everything, including yourself. The fun and flexibility disappear and you become frustrated that nothing measures up. This is a sign that your usual strategies for managing anxiety are maxed out."},
+  growth_dir:{num:5,text:"When you are truly at peace, you slow down. You go deeper rather than broader. You discover that a single idea explored fully is more satisfying than ten ideas explored partially. This is when your brilliance becomes genuinely transformative."},
+  wings:{w6:{num:6,name:"The Grounded Enthusiast",desc:"With a Six influence, you are warmer, more loyal, and more attuned to risk than a typical Seven. You still love adventure, but you are more invested in relationships and more thoughtful about consequences. You can be disarmingly self-deprecating and surprisingly anxious beneath your cheerful exterior."},w8:{num:8,name:"The Bold Enthusiast",desc:"With an Eight influence, you are more forceful, decisive, and entrepreneurially driven. You go after what you want with real intensity and are not afraid of confrontation. You have enormous energy and presence, and you lead as much through force of personality as through inspiration."}}},
+  8:{profile:"You are self-confident, decisive, and fiercely protective of the people and causes you care about. You move through the world with a directness and force that others can find both commanding and, at times, overwhelming. You were shaped — often early — by the understanding that the world does not protect the vulnerable, so you decided to become someone who could not be pushed around. Your strength is real, and so is the tender heart that lives beneath it, the one you learned to hide so well that even the people closest to you may not know it is there.",
+  strengths:["Natural, commanding presence","Decisive and action-oriented","Fiercely protective and loyal","High energy and remarkable resilience","Honest and direct — you always know where you stand","Champion of the powerless and advocate for justice"],
+  growth:["Vulnerability feels threatening and is avoided","Can appear aggressive or domineering without intending to","Creates adversarial dynamics in relationships","Struggles to relinquish control, even when it would help","May not see the impact of their intensity on others","Accountability can feel like an attack"],
+  relationships:"You love with enormous intensity and protectiveness. If you are in someone's corner, they know it. But the same force that makes you a formidable ally can make you hard to be close to — because closeness requires showing the parts of yourself that are uncertain, tender, or afraid. The people who love you do not need you to be invulnerable. They need the real you — which is more than strong enough.",
+  work:"You are built for leadership, and people follow you because you make hard decisions look easy and you do not flinch when things get difficult. You are excellent in any high-stakes environment: law, entrepreneurship, crisis management, executive leadership, advocacy. The thing that will make you exceptional rather than merely formidable is learning to empower the people around you rather than simply directing them.",
+  stress:{num:5,text:"Under pressure, you can become withdrawn, secretive, and unusually cerebral — retreating into your own mind, cutting people off, and becoming far more guarded than usual. This is often disorienting for those who rely on your presence and decisiveness."},
+  growth_dir:{num:2,text:"When you are genuinely thriving, your warmth becomes visible. You become more openly caring, more generous with your vulnerability, and more interested in others' wellbeing for its own sake rather than because they need protecting. This is the Eight at their most powerful and most human."},
+  wings:{w7:{num:7,name:"The Maverick",desc:"With a Seven influence, you are more visionary, energetic, and entrepreneurially driven. You love big ideas and bold moves, and you bring an infectious energy to whatever you take on. You are more playful and more likely to use humour — and your intensity is directed toward excitement as much as toward control."},w9:{num:9,name:"The Bear",desc:"With a Nine influence, you are more measured, patient, and willing to genuinely listen. You still have enormous presence and conviction, but you are more open to other people's perspectives and less likely to dominate. You can be a remarkably powerful mediator — both decisive and genuinely fair."}}},
+  9:{profile:"You are one of the most calming, accepting, and non-judgmental presences most people will ever encounter. You have a rare ability to see all sides of a situation without needing one of them to be yours — and this makes you a natural peacemaker, a trusted confidant, and someone others instinctively feel safe around. But the same quality that makes you so easy to be with creates your central challenge: in accommodating everyone else, you can slowly disappear from your own life. Your opinions get softened, your preferences deferred, your energy quietly channelled into keeping things comfortable rather than into anything that is actually yours.",
+  strengths:["Deeply calming and genuinely non-judgmental","Natural mediator who sees all perspectives clearly","Warm, loyal, and easy to be with","Patient and able to bring very different people together","Quietly wise with a deep capacity for acceptance","Spiritually receptive with an unusual sense of peace"],
+  growth:["Self-forgetting — own needs and agenda regularly sidelined","Conflict avoidance leads to unspoken resentments","Passive aggression replaces direct expression of frustration","Procrastination and inertia are real patterns","Can agree in the moment and quietly resist later","May wake up in midlife not knowing what they actually want"],
+  relationships:"You are warm, loyal, and genuinely devoted — and the people who love you value your easy presence more than you realise. But real intimacy requires both people to show up, and that means you need to share your preferences, your frustrations, and your actual opinions — not just reflect back what the other person wants to hear. When you do, your relationships become richer, and the people who love you feel like they actually know you.",
+  work:"You are the kind of colleague that makes a team function better — non-threatening, inclusive, able to read group dynamics and bring people together. You do well in counselling, HR, diplomacy, teaching, or any role where your ability to hold space for others is valued. Your challenge is asserting yourself in meetings, pushing back when you disagree, and treating your own ideas as worth sharing — because they genuinely are.",
+  stress:{num:6,text:"Under pressure, you can become unusually anxious, worried, and overcommitted — saying yes to too many things and then feeling overwhelmed by all of them. Underneath this is a fear that if you do not keep everything together, something important will fall apart."},
+  growth_dir:{num:3,text:"When you are thriving, you become more focused, more decisive, and more willing to put your energy into something that is specifically and deliberately yours. You stop waiting for life to organise itself and start making it happen. This is when your potential becomes visible to everyone."},
+  wings:{w8:{num:8,name:"The Assertive Peacemaker",desc:"With an Eight influence, you are more forceful, decisive, and direct than a typical Nine. You can surprise people with the strength of your conviction when something genuinely matters to you. You have a quiet but unmistakable authority, and you are more willing to engage in conflict when the situation calls for it."},w1:{num:1,name:"The Principled Peacemaker",desc:"With a One influence, you are more idealistic, ordered, and principled than a typical Nine. You care about fairness and doing things correctly, and your desire for peace is tied to a strong sense of how things ought to be. You may experience more internal tension between wanting harmony and wanting things to be right."}}}
+};
+
+/* ─── STATE ─────────────────────────────────────────────── */
+const SECS=[];
+for(let s=0;s<10;s++)SECS.push({label:`Part ${s+1}`,qs:Array.from({length:10},(_,i)=>s*10+i)});
+let curSec=0,answers={},lastScores=null,lastTopT=null;
+let candidate={first:'',last:'',email:'',phone:''};
+
+/* ─── REGISTRATION ──────────────────────────────────────── */
+function clearErr(id){
+  document.getElementById(id).classList.remove('error');
+  document.getElementById('err-'+id.split('-')[1]).classList.remove('show');
+}
+function validateAndStart(){
+  const f=document.getElementById('reg-first');
+  const l=document.getElementById('reg-last');
+  const e=document.getElementById('reg-email');
+  let ok=true;
+  if(!f.value.trim()){f.classList.add('error');document.getElementById('err-first').classList.add('show');ok=false;}
+  if(!l.value.trim()){l.classList.add('error');document.getElementById('err-last').classList.add('show');ok=false;}
+  const emailRx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRx.test(e.value.trim())){e.classList.add('error');document.getElementById('err-email').classList.add('show');ok=false;}
+  if(!ok)return;
+  candidate.first=f.value.trim();
+  candidate.last=l.value.trim();
+  candidate.email=e.value.trim();
+  candidate.phone=document.getElementById('reg-phone').value.trim();
+  document.getElementById('intro-screen').style.display='none';
+  document.getElementById('assessment-screen').style.display='block';
+  showSection(0);
+}
+
+/* ─── ASSESSMENT ────────────────────────────────────────── */
+function showSection(idx){
+  curSec=idx;
+  document.getElementById('section-title').textContent=`Section ${idx+1} of 10`;
+  document.getElementById('section-label').textContent=SECS[idx].label;
+  document.getElementById('progress-bar').style.width=`${(idx/10)*88}%`;
+  document.getElementById('page-indicator').textContent=`${idx+1} / 10`;
+  document.getElementById('prev-btn').style.display=idx>0?'block':'none';
+  document.getElementById('next-btn').textContent=idx===9?'Continue →':'Next →';
+  let html='';
+  SECS[idx].qs.forEach(qi=>{
+    const q=Q[qi],cur=answers[qi]||0;
+    html+=`<div class="q-item"><div class="q-text">${q.q}</div>
+    <div class="scale-row"><span class="scale-label">Inaccurate</span>
+    <div class="radio-group">`;
+    for(let v=1;v<=5;v++){
+      html+=`<input type="radio" name="q${qi}" id="q${qi}v${v}" value="${v}" ${cur===v?'checked':''} onchange="setAns(${qi},${v})">
+             <label for="q${qi}v${v}"></label>`;
+    }
+    html+=`</div><span class="scale-label">Accurate</span></div></div>`;
+  });
+  document.getElementById('section-body').innerHTML=html;
+  window.scrollTo(0,0);
+}
+function setAns(qi,v){answers[qi]=parseInt(v);}
+function nextSection(){
+  if(curSec===9){document.getElementById('assessment-screen').style.display='none';document.getElementById('demo-screen').style.display='block';window.scrollTo(0,0);}
+  else showSection(curSec+1);
+}
+function prevSection(){if(curSec>0)showSection(curSec-1);}
+
+/* ─── SCORING ───────────────────────────────────────────── */
+function calcScores(){
+  const raw={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+  const maxP={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+  Q.forEach((q,i)=>{raw[q.t]+=(answers[i]||3)*q.w;maxP[q.t]+=5*q.w;});
+  const norm={};
+  Object.keys(raw).forEach(t=>{norm[t]=maxP[t]>0?Math.round((raw[t]/maxP[t])*100):0;});
+  return norm;
+}
+
+/* ─── RESULTS ───────────────────────────────────────────── */
+function showResults(){
+  const scores=calcScores();
+  lastScores=scores;
+  document.getElementById('demo-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+
+  let topT=1;
+  Object.keys(scores).forEach(k=>{if(scores[k]>scores[topT])topT=parseInt(k);});
+  lastTopT=topT;
+
+  const adj={1:[9,2],2:[1,3],3:[2,4],4:[3,5],5:[4,6],6:[5,7],7:[6,8],8:[7,9],9:[8,1]};
+  const [wa,wb]=adj[topT];
+  const waDom=scores[wa]>=scores[wb];
+  const td=TD[topT];
+  const col=TC[topT];
+  const tcol=TT[topT];
+  const sg=SG[topT];
+
+  Object.values(td.wings).forEach(w=>{w.dominant=false;});
+  const wKeys=Object.keys(td.wings);
+  const domWKey=wKeys.find(k=>td.wings[k].num===(waDom?wa:wb));
+  if(domWKey)td.wings[domWKey].dominant=true;
+
+  document.getElementById('result-header').style.background=col;
+  document.getElementById('result-header').style.color=tcol;
+  document.getElementById('result-header').innerHTML=`
+    <div class="greeting">Here are your results, ${candidate.first}</div>
+    <div class="type-num">Type ${topT}</div>
+    <h2>${TN[topT]}</h2>
+    <div class="tagline">"${TG[topT]}"</div>`;
+
+  const maxScore=Math.max(...Object.values(scores));
+  let barsHtml='<div class="score-chart">';
+  for(let t=1;t<=9;t++){
+    const pct=Math.round((scores[t]/maxScore)*100);
+    barsHtml+=`<div class="score-row">
+      <span class="t-label" style="font-weight:${t===topT?'600':'400'}">${t===topT?'<strong>':''}Type ${t}${t===topT?'</strong>':''}</span>
+      <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:${TC[t]}"></div></div>
+      <span class="s-val">${scores[t]}%</span></div>`;
+  }
+  barsHtml+='</div>';
+
+  const wingsArr=Object.values(td.wings);
+  document.getElementById('result-body').innerHTML=`
+    <div class="prose-section">
+      <div class="rs-heading">Your type profile</div>
+      ${barsHtml}
+      <p style="font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:#aaa;margin-top:0.6rem">Scores show your relative match to each type as a percentage of the maximum possible for that type.</p>
+    </div>
+    <div class="result-divider"></div>
+    <div class="prose-section">
+      <div class="rs-heading">Core profile</div>
+      <p class="core-profile-text">${td.profile}</p>
+    </div>
+    <div class="result-divider"></div>
+    <div class="prose-section">
+      <div class="rs-heading">Strengths &amp; growth edges</div>
+      <div class="two-col">
+        <div><div class="col-heading">Strengths</div><ul class="bullet-list">${td.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+        <div><div class="col-heading">Growth edges</div><ul class="bullet-list">${td.growth.map(g=>`<li>${g}</li>`).join('')}</ul></div>
+      </div>
+    </div>
+    <div class="result-divider"></div>
+    <div class="prose-section">
+      <div class="rs-heading">In relationships</div>
+      <p>${td.relationships}</p>
+    </div>
+    <div class="result-divider"></div>
+    <div class="prose-section">
+      <div class="rs-heading">At work</div>
+      <p>${td.work}</p>
+    </div>
+    <div class="result-divider"></div>
+    <div class="prose-section">
+      <div class="rs-heading">Wings</div>
+      <p style="font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:#aaa;margin-bottom:0.9rem">Every type is shaped by one or both of its neighbouring types, called wings. Both descriptions may resonate — your likely dominant wing is highlighted.</p>
+      <div class="wings-grid">
+        ${wingsArr.map(w=>`<div class="wing-card${w.dominant?' dominant':''}" style="${w.dominant?'border-color:'+col:''}">
+          <div class="wing-card-title" style="${w.dominant?'color:'+col:''}">Wing ${w.num} — ${w.name}
+            ${w.dominant?`<span class="dominant-badge" style="background:${col}25;color:${col}">Likely dominant</span>`:''}
+          </div>
+          <p>${w.desc}</p></div>`).join('')}
+      </div>
+    </div>
+    <div class="result-divider"></div>
+    <div class="prose-section">
+      <div class="rs-heading">Stress &amp; growth directions</div>
+      <div class="stress-growth-grid">
+        <div class="sg-card sg-stress">
+          <div class="sg-card-title" style="color:#a33">Under stress — Type ${sg.s}</div>
+          <p>${td.stress.text}</p>
+        </div>
+        <div class="sg-card sg-growth">
+          <div class="sg-card-title" style="color:#2a6a3a">In growth — Type ${sg.g}</div>
+          <p>${td.growth_dir.text}</p>
+        </div>
+      </div>
+    </div>`;
+
+  window.scrollTo(0,0);
+}
+
+/* ─── EMAIL REQUEST ─────────────────────────────────────── */
+function requestReport(){
+  if(!lastScores||!lastTopT)return;
+  const scores=lastScores;
+  const topT=lastTopT;
+  const fullName=`${candidate.first} ${candidate.last}`;
+  const phone=candidate.phone?`\nContact number: ${candidate.phone}`:'';
+
+  let scoresText='Type scores:\n';
+  for(let t=1;t<=9;t++){
+    scoresText+=`  Type ${t} – ${TN[t]}: ${scores[t]}%\n`;
+  }
+
+  const subject=encodeURIComponent(`ECHO Enneagram – Detailed Report Request: ${fullName}`);
+  const body=encodeURIComponent(
+`Dear Ciska,
+
+I have completed the ECHO Enneagram Assessment and would like to request a more detailed report.
+
+My details:
+Name: ${fullName}
+Email: ${candidate.email}${phone}
+
+My result:
+Type ${topT}: ${TN[topT]}
+"${TG[topT]}"
+
+${scoresText}
+Please could you send me a more detailed report based on my results?
+
+Kind regards,
+${candidate.first} ${candidate.last}`
+  );
+
+  window.location.href=`mailto:ciska.vandermerwe@asi.co.za?subject=${subject}&body=${body}`;
+}
+
+function restartAssessment(){
+  answers={};lastScores=null;lastTopT=null;
+  candidate={first:'',last:'',email:'',phone:''};
+  document.getElementById('reg-first').value='';
+  document.getElementById('reg-last').value='';
+  document.getElementById('reg-email').value='';
+  document.getElementById('reg-phone').value='';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('intro-screen').style.display='block';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
