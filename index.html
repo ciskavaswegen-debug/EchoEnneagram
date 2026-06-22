@@ -188,6 +188,16 @@ body{font-family:'Georgia',serif;background:#eef2f5;color:#1a1a1a;min-height:100
     <div id="result-header" class="result-header"></div>
     <div class="result-body" id="result-body"></div>
     <div class="email-cta">
+      <h4>Submit your results to our team</h4>
+      <p>Send a copy of your results for our records.</p>
+      <button class="btn-email" onclick="sendResultsEmail()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        Submit Results via Email
+      </button>
+      <p style="font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:#aaa;margin-top:0.75rem;margin-bottom:0">If the button above doesn't open your email app, copy and send the following to <a href="mailto:ciska.vandermerwe@asi.co.za" style="color:#404040;text-decoration:underline">ciska.vandermerwe@asi.co.za</a>: your name, email, and the message "I have completed the ECHO Enneagram Assessment." We will match your submission to your results on file.</p>
+    </div>
+
+    <div class="email-cta">
       <h4>Would you like a more detailed report?</h4>
       <p>Request a full personalised report based on your results. We will be in touch within 2–3 business days.</p>
       <button class="btn-email" onclick="requestReport()">
@@ -473,7 +483,7 @@ function showSubmitScreen(){
 
 function submitResultsAndContinue(){
   sendResultsEmail();
-  proceedToResultsOnly();
+  setTimeout(proceedToResultsOnly, 300);
 }
 
 function proceedToResultsOnly(){
@@ -481,8 +491,18 @@ function proceedToResultsOnly(){
   showResults();
 }
 
-/* Shared email builder — used by both the submit-screen button and the
-   Request Detailed Report button on the results page */
+/* Opens a mailto link without disrupting the current page or script flow */
+function openMailto(url){
+  const a=document.createElement('a');
+  a.href=url;
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+/* Shared email builder — used by the submit-screen button and the
+   results-page "Submit Results via Email" / "Request Detailed Report" buttons */
 function sendResultsEmail(){
   const scores=calcScores();
   let topT=1;
@@ -515,7 +535,7 @@ Kind regards,
 ${candidate.first} ${candidate.last}`
   );
 
-  window.location.href=`mailto:ciska.vandermerwe@asi.co.za?subject=${subject}&body=${body}`;
+  openMailto(`mailto:ciska.vandermerwe@asi.co.za?subject=${subject}&body=${body}`);
 }
 
 /* ─── SCORING ───────────────────────────────────────────── */
@@ -665,7 +685,7 @@ Kind regards,
 ${candidate.first} ${candidate.last}`
   );
 
-  window.location.href=`mailto:ciska.vandermerwe@asi.co.za?subject=${subject}&body=${body}`;
+  openMailto(`mailto:ciska.vandermerwe@asi.co.za?subject=${subject}&body=${body}`);
 }
 
 function restartAssessment(){
